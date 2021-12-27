@@ -5,42 +5,39 @@ declare(strict_types=1);
 namespace Respinar\ContaoSmsBundle\Controller;
 
 use SoapClient;
-use Contao\Config;
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+
+use Contao\CoreBundle\Framework\FrameworkAwareInterface;
+use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 
 /*
  * Class sendSMSAPI
  */
-class sendSMSAPI
+class sendSMSAPI implements FrameworkAwareInterface
 {
-    /** @var ContaoFrameworkInterface */
-    private $framework;
+    use FrameworkAwareTrait;
 
-    public function __construct() //ContaoFrameworkInterface $framework)
+    /**
+     * sendSMSAPI constructor.
+     *
+     */
+    public function __construct()
     {
-        //$this->framework = $framework;
-
-        //$this->framework->initialize();
-
-        //$configAdapter = $this->framework->getAdapter(Config::class);
-
-        $this->sms_gateway    =  'http://payamak-service.ir/SendService.svc?wsdl'; //(string) $configAdapter->get('sms_gateway');
-        $this->sms_fromNumber =  "09142553221";//(string) $configAdapter->get('sms_fromNumber');
-        $this->sms_username   =  "hamid";//(string) $configAdapter->get('sms_username');
-        $this->sms_password   =  "oxford87";//(string) $configAdapter->get('sms_password');
+        // Somthings
     }
 
     public function __invoke(string $toNumber, string $message)
     {
+
+        $settings = new sendSMSAPISetting($this->framework);
 
         ini_set("soap.wsdl_cache_enabled", "0");
 
         $sms_client = new SoapClient($this->sms_gateway, array('encoding'=>'UTF-8'));
 
         try {
-            $parameters['userName'] = $this->sms_username;
-            $parameters['password'] = $this->sms_password;
-            $parameters['fromNumber'] = $this->sms_fromNumber;
+            $parameters['userName'] = $settings->sms_username;
+            $parameters['password'] = $settings->sms_password;
+            $parameters['fromNumber'] = $settings->sms_fromNumber;
             $parameters['toNumbers'] = array("09120001234");
             $parameters['messageContent'] = "message content";
             $parameters['isFlash'] = false;

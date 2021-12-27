@@ -1,1 +1,13 @@
 services:
+    _defaults:
+        public: true
+
+    _instanceof:
+        Contao\CoreBundle\Framework\FrameworkAwareInterface:
+            calls:
+                - ["setFramework", ["@contao.framework"]]
+
+    respinar_sms_bundle.send_sms_api_setting:
+        class: Respinar\ContaoSmsBundle\Controller\sendSMSAPISetting
+        arguments:
+          - "@contao.framework"
